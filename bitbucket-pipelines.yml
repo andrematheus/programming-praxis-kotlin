@@ -1,0 +1,7 @@
+image: andreroquem/kotlin-build
+
+pipelines:
+  default:
+    - step:
+        script:
+          - mvn test
