@@ -6,13 +6,16 @@ interface RpnCalculatorValue<T> {
     fun print(t: T)
 }
 
-class RpnCalculator<T>(val v: RpnCalculatorValue<T>,
-                       init: RpnCalculator<T>.() -> Unit) {
+class RpnCalculator<T : Any>(
+    private val v: RpnCalculatorValue<T>,
+    init: RpnCalculator<T>.() -> Unit
+) {
 
     private data class Operation<T>(val arity: Int, val fn: (List<T>) -> T)
+
     private val operations = mutableMapOf<String, Operation<T>>()
 
-    val s: Stack<T> = Stack<T>()
+    private val s: Stack<T> = Stack<T>()
 
     init {
         init()
@@ -21,24 +24,19 @@ class RpnCalculator<T>(val v: RpnCalculatorValue<T>,
     val top: T
         get() = s.peek()
 
-    fun operation(name: String, arity: Int, fn: (List<T>) -> T) {
-        operations[name] = Operation(arity, fn)
-    }
-
-    fun binop(fn: (T, T) -> T) = { l: List<T> ->
-        val (x, y) = l
-        fn(x, y)
+    infix fun String.calls(fn: (T, T) -> T) {
+        operations[this] = Operation(2, { xs -> fn(xs[0], xs[1]) })
     }
 
     private fun doOperation(op: Operation<T>) {
-        val l = mutableListOf<T>()
-        for (i in 1..op.arity) {
-            l.add(s.pop())
-        }
+        val l = generateSequence { s.pop() }
+            .take(op.arity)
+            .toList()
+            .reversed()
         s.push(op.fn(l))
     }
 
-    private fun evaluate_token(token: String) {
+    private fun evaluateToken(token: String) {
         val operation = operations[token]
         if (operation != null) {
             doOperation(operation)
@@ -54,7 +52,7 @@ class RpnCalculator<T>(val v: RpnCalculatorValue<T>,
 
     fun evaluate(expr: String) {
         expr.split(" ").forEach {
-            evaluate_token(it)
+            evaluateToken(it)
         }
         v.print(s.peek())
     }
@@ -67,7 +65,7 @@ class RpnCalculator<T>(val v: RpnCalculatorValue<T>,
     }
 }
 
-object floatValue : RpnCalculatorValue<Double> {
+object DoubleValue : RpnCalculatorValue<Double> {
     override fun fromString(s: String) = s.toDouble()
 
     override fun print(t: Double) {
@@ -75,11 +73,11 @@ object floatValue : RpnCalculatorValue<Double> {
     }
 }
 
-val floatCalculator = RpnCalculator(floatValue) {
-    operation("+", 2, binop { x, y -> y + x })
-    operation("-", 2, binop { x, y -> y - x })
-    operation("*", 2, binop { x, y -> y * x })
-    operation("/", 2, binop { x, y -> y / x })
+val floatCalculator = RpnCalculator(DoubleValue) {
+    "+" calls Double::plus
+    "-" calls Double::minus
+    "*" calls Double::times
+    "/" calls Double::div
 }
 
 fun main(args: Array<String>) {
