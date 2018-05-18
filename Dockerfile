@@ -6,4 +6,4 @@ RUN mkdir /app
 
 COPY . /app
 
-RUN cd /app; mvn test
+RUN cd /app; mvn -q test
