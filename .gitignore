@@ -1,4 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
+build/
+.gradle/
 ### Maven template
 target/
 pom.xml.tag

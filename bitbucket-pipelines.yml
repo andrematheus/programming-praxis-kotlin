@@ -4,4 +4,4 @@ pipelines:
   default:
     - step:
         script:
-          - mvn -q test
+          - ./gradlew test

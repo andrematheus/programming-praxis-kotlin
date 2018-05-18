@@ -6,4 +6,4 @@ RUN mkdir /app
 
 COPY . /app
 
-RUN cd /app; mvn -q test
+RUN cd /app; ./gradlew test

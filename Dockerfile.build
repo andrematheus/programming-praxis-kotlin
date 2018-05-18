@@ -5,5 +5,3 @@ MAINTAINER André Roque Matheus <amatheus@mac.com>
 RUN apt-get update; apt-get -y upgrade
 
 RUN apt -y install openjdk-8-jdk-headless
-
-RUN apt-get -y install maven

@@ -7,11 +7,11 @@ using Kotlin.
 
 To compile all problems:
 
-	mvn compile
+	gradle build
 
 To compile and test all problems:
 
-	mvn test
+	gradle test
 
 ## RPN Calculator (rpn-calculator)
 
