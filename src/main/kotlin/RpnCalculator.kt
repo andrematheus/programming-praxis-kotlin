@@ -15,7 +15,7 @@ class RpnCalculator<T : Any>(
 
     private val operations = mutableMapOf<String, Operation<T>>()
 
-    private val s: Stack<T> = Stack<T>()
+    private val s: Stack<T> = Stack()
 
     init {
         init()
